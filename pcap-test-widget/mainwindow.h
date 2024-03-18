@@ -19,7 +19,9 @@ class PacketCaptureThread : public QThread
     Q_OBJECT
 
 public:
+    bool m_stopThread;
     explicit PacketCaptureThread(MainWindow *mainWindow, QObject *parent = nullptr);
+    void setThreadFlag(bool flag);
 
 protected:
     void run() override;
@@ -42,11 +44,13 @@ public:
     bool check_tcp(u_int8_t type);
     void print_packet_data();
 
+
 private slots:
     void on_InterfaceSearchBtn_clicked();
     void on_AttackBtn_clicked();
     void on_AttackStopBtn_clicked();
     void on_listWidget_itemClicked(QListWidgetItem *item);
+
 
 private:
     Ui::MainWindow *ui;

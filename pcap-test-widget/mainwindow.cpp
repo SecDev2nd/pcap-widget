@@ -85,7 +85,10 @@ typedef struct {
 Param param = {
     .dev_ = NULL
 };
-
+void PacketCaptureThread::setThreadFlag(bool flag)
+{
+    m_stopThread = flag;
+}
 
 void MainWindow::print_packet_data(){
     char errbuf[PCAP_ERRBUF_SIZE];
@@ -102,7 +105,7 @@ void MainWindow::print_packet_data(){
 
 
     // pacp capturing....
-    while (true) {
+    while (m_captureThread->m_stopThread) {
         struct pcap_pkthdr* header;
         const u_char* packet;
         ui->lcdNumber->display(cnt++);
@@ -159,6 +162,7 @@ PacketCaptureThread::PacketCaptureThread(MainWindow *mainWindow, QObject *parent
 
 void PacketCaptureThread::run()
 {
+    setThreadFlag(true);
     m_mainWindow->print_packet_data();
 }
 
@@ -169,13 +173,14 @@ void MainWindow::on_InterfaceSearchBtn_clicked()
 
 void MainWindow::on_AttackBtn_clicked()
 {
+
     m_captureThread->start();
 }
 
 
 void MainWindow::on_AttackStopBtn_clicked()
 {
-    m_captureThread->quit();
+    m_captureThread->setThreadFlag(false);
 }
 
 void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
